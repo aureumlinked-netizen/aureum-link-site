@@ -1,0 +1,70 @@
+name: CI
+
+# Сайт деплоит Cloudflare Pages, а этот прогон отвечает на другой вопрос:
+# собирается ли то, что уходит в main, и не появилось ли в нём формулировок,
+# которых у проекта быть не может.
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build static site
+        run: npm run build
+
+      # Один раз живой сайт уже месяц утверждал, что токен запущен, потому что
+      # исходники были исправлены, а сборка — нет. Проверяем именно то, что
+      # уходит пользователю, а не то, что лежит в src.
+      - name: Никаких обещаний дохода и запущенного токена
+        run: |
+          set -eu
+          fail=0
+          check() {
+            if grep -rqiF "$1" out/; then
+              echo "::error::в собранном сайте найдено: $1"
+              grep -rliF "$1" out/ | sed 's/^/    /'
+              fail=1
+            fi
+          }
+          # Утверждения, что токен существует и продаётся
+          check "token is live"
+          check "buy token"
+          check "токен запущен"
+          check "купить токен"
+          check "presale"
+          check "пресейл"
+          # Обещания дохода
+          check "доходность"
+          check "гарантированный доход"
+          check "% годовых"
+          check "guaranteed return"
+          check "passive income"
+          check "apy"
+          [ "$fail" -eq 0 ] || exit 1
+          echo "запрещённых формулировок нет"
+
+      - name: Обе локали на месте
+        run: |
+          set -eu
+          # ru и en обязаны совпадать структурно. TypeScript это уже проверяет
+          # при сборке, но упасть здесь понятнее, чем искать причину в логе next.
+          for phrase in "aureum-link.com"; do
+            grep -rqF "$phrase" out/ || { echo "::error::в сборке нет $phrase"; exit 1; }
+          done
+          echo "адрес и локали на месте"

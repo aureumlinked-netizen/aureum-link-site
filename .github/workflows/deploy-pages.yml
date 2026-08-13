@@ -1,8 +1,9 @@
 name: Deploy GitHub Pages
 
-# Hosting moved to Cloudflare Pages: the GitHub account is locked over billing, so
-# Actions never start and every push produced a failed deploy. Kept as manual-only so
-# the workflow still works if the account is unlocked later.
+# The site is served by Cloudflare Pages at aureum-link.com, so this is not the
+# deploy path — it stays manual as a fallback that can publish a copy to
+# <owner>.github.io/<repo> if Cloudflare is ever unavailable. Note that a project
+# page lives under a subpath, which next.config.ts handles via GITHUB_ACTIONS.
 on:
   workflow_dispatch:
 

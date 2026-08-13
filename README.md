@@ -65,7 +65,8 @@ Notes:
 
 ## Deployment
 
-The site is hosted on **Cloudflare Pages**, built from `main` on every push:
+Live at **https://aureum-link.com**, served by **Cloudflare Pages** and rebuilt
+from `main` on every push:
 
 | Setting | Value |
 | --- | --- |
@@ -73,12 +74,18 @@ The site is hosted on **Cloudflare Pages**, built from `main` on every push:
 | Build command | `npm run build` |
 | Build output directory | `out` |
 | `NODE_VERSION` | `24` |
-| `NEXT_PUBLIC_SITE_URL` | the site's public address, with trailing slash |
+| `NEXT_PUBLIC_SITE_URL` | `https://aureum-link.com/` |
 
-`NEXT_PUBLIC_SITE_URL` only feeds Open Graph metadata. `basePath` needs no setting here:
-`next.config.ts` injects `/cryptocoin-site` only when `GITHUB_ACTIONS === "true"`, so
-anywhere else the site builds for the domain root.
+`NEXT_PUBLIC_SITE_URL` only feeds Open Graph metadata and already defaults to the
+live address in `layout.tsx`. `basePath` needs no setting: `next.config.ts` injects
+a repo subpath only when `GITHUB_ACTIONS === "true"`, so anywhere else the site
+builds for the domain root.
 
-The GitHub Pages workflow in `.github/workflows/deploy-pages.yml` is kept but is
-**manual only** (`workflow_dispatch`) — the account is locked over a billing issue, so
-push-triggered runs only produced failures.
+> Turbopack's persistent cache can survive edits to page metadata — a build may
+> report success while still emitting the previous Open Graph URLs. If a metadata
+> change does not show up, delete `.next` and rebuild, and verify by grepping
+> `out/index.html` rather than reading the build log.
+
+`.github/workflows/ci.yml` builds every push and fails if the built site claims the
+token is launched or promises income. `.github/workflows/deploy-pages.yml` is a
+manual-only (`workflow_dispatch`) fallback that publishes a copy to GitHub Pages.
