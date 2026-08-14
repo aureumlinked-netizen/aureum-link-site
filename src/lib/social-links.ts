@@ -9,11 +9,11 @@
 export type SocialKey = "twitter" | "telegram" | "youtube" | "reddit" | "email";
 
 export const SOCIAL_HREFS: Record<SocialKey, string> = {
-  twitter: "", // TODO: X / Twitter profile URL
-  telegram: "", // TODO: Telegram channel URL
-  youtube: "", // TODO: YouTube channel or live-stream URL
-  reddit: "", // TODO: subreddit URL
-  email: "", // TODO: mailto:...
+  twitter: "https://x.com/aureumlink",
+  telegram: "https://t.me/aureum_link",
+  youtube: "https://www.youtube.com/@AureumLink",
+  reddit: "", // не заведён
+  email: "", // не заведён: личную почту сюда не ставим
 };
 
 const SOCIAL_ORDER: SocialKey[] = [
