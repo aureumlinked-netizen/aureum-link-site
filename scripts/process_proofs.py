@@ -46,12 +46,17 @@ INVOICE_REDACTIONS = [
 # for visitors either — it reads as receipt detail, not as a working link.
 
 # name -> (source file, redactions, target width, tile cols, tile rows)
-SOURCES = Path(r"D:\CryptoCoin\Исходники")
+#
+# Все четыре документа берутся из одной папки. Раньше слиток и чек читались из
+# «Исходников», а сертификаты — из --src, и в «Исходниках» при этом лежала
+# старая версия чека с ошибкой. Один источник на всё: правишь документ там, и
+# сайт с роликами гарантированно показывают одно и то же.
+SOURCES = Path(r"D:\CryptoCoin\good")
 
 DOCS = {
     "gold-bar": (SOURCES / "gold.png", [], 900, 3, 6),
-    "certificate": ("license_png.png", [], 1440, 4, 3),
-    "certificate-uv": ("license_uv_png.png", [], 1440, 4, 3),
+    "certificate": (SOURCES / "license_png.png", [], 1440, 4, 3),
+    "certificate-uv": (SOURCES / "license_uv_png.png", [], 1440, 4, 3),
     "invoice": (SOURCES / "invoice1.png", INVOICE_REDACTIONS, 1000, 2, 8),
 }
 

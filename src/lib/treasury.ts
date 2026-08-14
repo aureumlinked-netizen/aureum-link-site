@@ -90,7 +90,7 @@ export const TREASURY_ASSETS: TreasuryAsset[] = [
           ru: "Документ покупки (инвойс)",
           en: "Purchase document (invoice)",
         },
-        meta: "INV-2026-110584",
+        meta: "INV-2026-110684",
       },
     ],
   },
