@@ -1,7 +1,7 @@
 "use client";
 
 import { useTranslations } from "@/lib/language-context";
-import { SOCIAL_HREFS, SOCIAL_ORDER, type SocialKey } from "@/lib/social-links";
+import { LIVE_SOCIALS, SOCIAL_HREFS, type SocialKey } from "@/lib/social-links";
 import {
   MailIcon,
   RedditIcon,
@@ -29,13 +29,17 @@ const ACCENTS: Record<SocialKey, string> = {
 export function SocialLinksRow() {
   const t = useTranslations();
 
+  // Пока ни один канал не заведён, блок не рисуется совсем: заголовок «Мы в сети»
+  // над пустотой обещает то, чего нет.
+  if (LIVE_SOCIALS.length === 0) return null;
+
   return (
     <div className="flex flex-col gap-3">
       <div className="text-xs font-semibold uppercase tracking-[0.24em] text-white/50">
         {t.social.menuTitle}
       </div>
       <div className="flex flex-wrap items-center gap-2.5">
-        {SOCIAL_ORDER.map((key) => {
+        {LIVE_SOCIALS.map((key) => {
           const Icon = ICONS[key];
           return (
             <a

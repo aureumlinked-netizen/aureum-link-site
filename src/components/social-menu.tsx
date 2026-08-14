@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useTranslations } from "@/lib/language-context";
-import { SOCIAL_HREFS, SOCIAL_ORDER, type SocialKey } from "@/lib/social-links";
+import { LIVE_SOCIALS, SOCIAL_HREFS, type SocialKey } from "@/lib/social-links";
 import {
   MailIcon,
   RedditIcon,
@@ -59,6 +59,10 @@ export function SocialMenu({ triggerClassName, triggerLabel, align = "right" }: 
     };
   }, [open]);
 
+  // После хуков, не раньше: иначе нарушится порядок вызовов. Пока ни один канал
+  // не заведён, кнопка не рисуется — открывать пустое меню незачем.
+  if (LIVE_SOCIALS.length === 0) return null;
+
   return (
     <div ref={containerRef} className="relative">
       <button
@@ -89,7 +93,7 @@ export function SocialMenu({ triggerClassName, triggerLabel, align = "right" }: 
         </div>
 
         <div className="flex flex-col gap-1.5">
-          {SOCIAL_ORDER.map((key, index) => {
+          {LIVE_SOCIALS.map((key, index) => {
             const Icon = ICONS[key];
             return (
               <a

@@ -120,7 +120,7 @@ export const translations = {
           title: "🌐 Почему это важно: тренд RWA",
           paragraphs: [
             "Токенизация реальных активов — заметный тренд последних лет. Но большинство проектов по-прежнему прячут активы за отчётами и кастодианами.",
-            "AUREUM LINK делает ставку на другое: принцип Do not trust, verify — открытая трансляция, документы и публичный он-чейн кошелёк казны.",
+            "AUREUM LINK делает ставку на другое: принцип Do not trust, verify — открытая трансляция и документы, которые можно проверить сегодня. Адрес кошелька казны будет опубликован там же, когда появится.",
           ],
         },
       ],
@@ -146,7 +146,7 @@ export const translations = {
           "🥇 Золотой слиток показан открыто с первого дня проекта",
           "📡 Круглосуточная трансляция казны — без выходных и пауз",
           "🧾 Документы и серийные номера открыты для проверки",
-          "🔓 Кошелёк казны и контракт — публичные и он-чейн",
+          "🔓 Что уже есть, а чего ещё нет — написано прямо, отдельным списком",
         ],
       },
     },
@@ -210,7 +210,7 @@ export const translations = {
     },
     trust: {
       kicker: "🛡️ Архитектура доверия",
-      title: "Почему золото, прозрачность и открытый кошелёк работают вместе",
+      title: "Почему золото, прозрачность и честность про недостатки работают вместе",
       description:
         "Базовые блоки доверия, на которых держится весь проект.",
       panels: [
@@ -220,7 +220,7 @@ export const translations = {
         },
         {
           title: "🔍 Прозрачность и подтверждение",
-          body: "Стрим, документы и он-чейн кошелёк казны работают как единая зона доверия, а не как набор разрозненных обещаний.",
+          body: "Стрим и документы работают как единая зона доверия, а не как набор разрозненных обещаний. Кошелёк казны добавится туда же — публично и он-чейн, когда будет что показывать.",
         },
         {
           title: "⚙️ Честность про недостатки",
@@ -357,13 +357,13 @@ export const translations = {
       platformLabel: "Платформа",
       platformValue: "Base · ERC-20",
       standardNote:
-        "Base — сеть второго уровня Ethereum. Контракт и кошелёк казны можно проверить в обозревателе Basescan.",
+        "Base — сеть второго уровня Ethereum. После запуска контракт и кошелёк казны можно будет проверить в обозревателе Basescan.",
       allocationTitle: "Распределение",
       allocation: [
         {
           label: "Резерв проекта",
           percent: 40,
-          note: "Финансирование покупок реальных активов в казну. Публичный кошелёк.",
+          note: "Финансирование покупок реальных активов в казну. Кошелёк будет публичным.",
         },
         {
           label: "Публичная продажа",
@@ -452,7 +452,7 @@ export const translations = {
         title: "✅ AUREUM LINK",
         items: [
           "Актив показан в прямом эфире 24/7 — видно, а не «по отчёту»",
-          "Прозрачность = живой стрим, документы и он-чейн кошелёк казны",
+          "Прозрачность = живой стрим и документы; кошелёк казны — следующим шагом",
           "Ничего не нужно погашать: проект открыт, а не является правом требования",
           "Один автор в открытую, честно про то, чего ещё нет",
         ],
@@ -465,7 +465,7 @@ export const translations = {
         },
         {
           title: "Сейчас",
-          body: "Веду эфир, публикую адрес кошелька казны и собираю тех, кому это интересно.",
+          body: "Веду эфир, собираю тех, кому это интересно, и готовлю публикацию адреса кошелька казны.",
         },
         {
           title: "Дальше",
@@ -616,7 +616,7 @@ export const translations = {
           title: "🌐 Why This Matters: The RWA Trend",
           paragraphs: [
             "Real-world asset tokenization is a notable trend of recent years. But most projects still hide their assets behind reports and custodians.",
-            "AUREUM LINK bets on something else: the 'Do not trust, verify' principle — an open live stream, documents, and a public on-chain treasury wallet.",
+            "AUREUM LINK bets on something else: the 'Do not trust, verify' principle — an open live stream and documents you can check today. The treasury wallet address will be published in the same place, once it exists.",
           ],
         },
       ],
@@ -641,7 +641,7 @@ export const translations = {
           "🥇 A gold bar shown openly from day one of the project",
           "📡 A 24/7 treasury stream — no weekends, no pauses",
           "🧾 Documents and serial numbers open for verification",
-          "🔓 The treasury wallet and contract — public and on-chain",
+          "🔓 What exists and what doesn't — stated plainly, in its own list",
         ],
       },
     },
@@ -705,7 +705,7 @@ export const translations = {
     },
     trust: {
       kicker: "🛡️ Trust architecture",
-      title: "Why gold, transparency, and an open wallet work together",
+      title: "Why gold, transparency, and being honest about the gaps work together",
       description: "The foundational trust blocks the whole project stands on.",
       panels: [
         {
@@ -714,7 +714,7 @@ export const translations = {
         },
         {
           title: "🔍 Transparency and Verification",
-          body: "The stream, documents, and on-chain treasury wallet operate as a single trust zone — not as a set of scattered promises.",
+          body: "The stream and the documents operate as a single trust zone — not as a set of scattered promises. The treasury wallet joins them, public and on-chain, once there is something to show.",
         },
         {
           title: "⚙️ Honesty About Shortcomings",
@@ -851,13 +851,13 @@ export const translations = {
       platformLabel: "Platform",
       platformValue: "Base · ERC-20",
       standardNote:
-        "Base is an Ethereum Layer 2 network. The contract and the treasury wallet can be verified on the Basescan explorer.",
+        "Base is an Ethereum Layer 2 network. Once launched, the contract and the treasury wallet will be verifiable on the Basescan explorer.",
       allocationTitle: "Distribution",
       allocation: [
         {
           label: "Project reserve",
           percent: 40,
-          note: "Funds purchases of real assets for the treasury. A public wallet.",
+          note: "Funds purchases of real assets for the treasury. The wallet will be public.",
         },
         {
           label: "Public sale",
@@ -946,7 +946,7 @@ export const translations = {
         title: "✅ AUREUM LINK",
         items: [
           "The asset is shown live 24/7 — seen, not 'per report'",
-          "Transparency = a live stream, documents, and an on-chain treasury wallet",
+          "Transparency = a live stream and documents; the treasury wallet comes next",
           "Nothing to redeem: the project is open, not a claim",
           "One author in the open, honest about what isn't there yet",
         ],
@@ -959,7 +959,7 @@ export const translations = {
         },
         {
           title: "Now",
-          body: "Running the stream, publishing the treasury wallet address, and gathering the people who care.",
+          body: "Running the stream, gathering the people who care, and preparing to publish the treasury wallet address.",
         },
         {
           title: "Next",
