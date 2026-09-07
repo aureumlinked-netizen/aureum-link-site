@@ -42,7 +42,12 @@ export function HeroSection() {
         } else if (data?.status === "offline") {
           setStream({ status: "offline" });
         } else {
-          setStream(fallback);
+          // Эфир не подтверждён, но ID мог прийти из RSS-фида: показываем
+          // свежий ролик и НЕ рисуем красную точку.
+          setStream({
+            status: "unknown",
+            videoId: data?.videoId || LIVE_STREAM.fallbackVideoId,
+          });
         }
       })
       .catch(() => {
