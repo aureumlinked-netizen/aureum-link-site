@@ -8,16 +8,17 @@
  * Главное ограничение, выясненное на живом деплое: обычную страницу YouTube с
  * IP дата-центра Cloudflare получить нельзя — Google отвечает 429 и уводит на
  * `google.com/sorry/index`. Куки согласия и десктопный user-agent это не
- * обходят. Поэтому источников три, от точного к живучему:
+ * обходят. Поэтому источников три:
  *
- *   1. YouTube Data API — если в переменных окружения задан YOUTUBE_API_KEY.
- *      Единственный источник, который прямо отвечает "эфир идёт". Без ключа
- *      слой просто пропускается.
- *   2. Страница канала — работает не с каждого узла, но если ответила, даёт и
- *      ID, и признак эфира.
- *   3. RSS-фид канала — обычный XML, его отдают и дата-центрам. Про эфир он не
- *      знает, но всегда возвращает ID последнего ролика. Этого хватает, чтобы
- *      плеер на сайте не протух.
+ *   1. RSS-фид канала — обычный XML, его отдают и дата-центрам, поэтому он
+ *      идёт первым. Про эфир он не знает, но всегда даёт ID последнего ролика:
+ *      этого хватает, чтобы плеер не протух, и это бесплатный кандидат для
+ *      следующего слоя.
+ *   2. YouTube Data API — если задан YOUTUBE_API_KEY. Единственный источник,
+ *      который прямо отвечает "эфир идёт". Проверяет кандидата из фида
+ *      (1 единица квоты), а не ищет по каналу (100). Без ключа пропускается.
+ *   3. Страница канала — с edge-узлов обычно 429, но если ответила, это
+ *      бесплатный способ узнать про эфир.
  *
  * Отдаёт:
  *   { status: "live",    videoId }  — эфир подтверждён
@@ -60,20 +61,40 @@ function json(body, seconds) {
   });
 }
 
-/* ---------- слой 1: официальный API, только если задан ключ ---------- */
+/** Подтверждённый эфир держим дольше: он не меняется каждую минуту. */
+function ttl(body) {
+  return body.status === "live" ? LIVE_TTL : SHORT_TTL;
+}
 
-async function fromApi(apiKey) {
-  if (!apiKey) return { ok: false, why: "нет ключа" };
+/* ---------- проверка эфира через официальный API ---------- */
+
+/**
+ * Проверяет конкретный ролик, а не ищет эфир по каналу. Это принципиально
+ * дешевле: `search` стоит 100 единиц квоты из 10 000 в сутки — при опросе раз
+ * в минуту дневной лимит кончился бы за пару часов. `videos.list` стоит 1, а
+ * кандидата бесплатно даёт RSS-фид.
+ *
+ * Без ключа слой просто пропускается, и сайт работает по фиду.
+ */
+async function checkWithApi(apiKey, videoId) {
+  if (!apiKey) return { ok: false, why: "ключ не задан" };
+  if (!videoId) return { ok: false, why: "нет кандидата для проверки" };
   const url =
-    "https://www.googleapis.com/youtube/v3/search?part=snippet&type=video" +
-    `&eventType=live&channelId=${CHANNEL_ID}&maxResults=1&key=${apiKey}`;
+    "https://www.googleapis.com/youtube/v3/videos" +
+    `?part=snippet,liveStreamingDetails&id=${videoId}&key=${apiKey}`;
   try {
-    const resp = await fetch(url, { cf: { cacheTtl: SHORT_TTL, cacheEverything: true } });
+    const resp = await fetch(url, {
+      cf: { cacheTtl: SHORT_TTL, cacheEverything: true },
+    });
     if (!resp.ok) return { ok: false, why: `http ${resp.status}` };
     const data = await resp.json();
-    const id = data?.items?.[0]?.id?.videoId;
-    // пустой items — законный ответ: значит, эфира сейчас нет
-    return id ? { ok: true, live: true, videoId: id } : { ok: true, live: false };
+    const item = data?.items?.[0];
+    if (!item) return { ok: false, why: "видео не найдено" };
+    // liveBroadcastContent: "live" | "upcoming" | "none"
+    const state = item.snippet?.liveBroadcastContent;
+    // actualEndTime появляется у завершённой трансляции: запись — не эфир
+    const ended = Boolean(item.liveStreamingDetails?.actualEndTime);
+    return { ok: true, live: state === "live" && !ended, state };
   } catch (err) {
     return { ok: false, why: String(err) };
   }
@@ -149,38 +170,35 @@ async function fromFeed() {
 
 export async function onRequestGet({ request, env }) {
   const debug = new URL(request.url).searchParams.get("debug") === "1";
+  const reply = (body, extra) =>
+    json(debug ? { ...body, ...extra } : body, debug ? 0 : ttl(body));
 
-  const api = await fromApi(env?.YOUTUBE_API_KEY);
-  if (api.ok && api.live) {
-    return json(
-      debug ? { status: "live", videoId: api.videoId, via: "api", api } : { status: "live", videoId: api.videoId },
-      debug ? 0 : LIVE_TTL,
-    );
+  // Фид идёт первым: он единственный, кто отвечает с IP дата-центра, и он же
+  // бесплатно даёт кандидата для дешёвой проверки через API.
+  const feed = await fromFeed();
+  const candidate = feed.ok ? feed.videoId : null;
+
+  const api = await checkWithApi(env?.YOUTUBE_API_KEY, candidate);
+  if (api.ok) {
+    return api.live
+      ? reply({ status: "live", videoId: candidate }, { via: "api", feed, api })
+      : reply({ status: "offline" }, { via: "api", feed, api });
   }
 
+  // Без ключа остаётся страница канала. С edge-узлов Google обычно отвечает
+  // 429, но если ответил — это единственный бесплатный способ узнать про эфир.
   const page = await fromPage();
   if (page.ok && page.live) {
-    return json(
-      debug ? { status: "live", videoId: page.videoId, via: "page", api, page } : { status: "live", videoId: page.videoId },
-      debug ? 0 : LIVE_TTL,
-    );
+    return reply({ status: "live", videoId: page.videoId }, { via: "page", feed, api, page });
+  }
+  if (page.ok) {
+    return reply({ status: "offline" }, { via: "page", feed, api, page });
   }
 
-  // Точное "эфира нет" принимаем только от источников, которые это знают.
-  if ((api.ok && api.live === false) || (page.ok && page.live === false)) {
-    const via = api.ok ? "api" : "page";
-    return json(
-      debug ? { status: "offline", via, api, page } : { status: "offline" },
-      debug ? 0 : SHORT_TTL,
-    );
-  }
-
-  const feed = await fromFeed();
-  const body = feed.ok
-    ? { status: "unknown", videoId: feed.videoId }
-    : { status: "unknown" };
-  return json(
-    debug ? { ...body, via: "feed", api, page, feed } : body,
-    debug ? 0 : SHORT_TTL,
+  // Подтвердить эфир нечем. Отдаём свежий ID из фида: сайт покажет актуальный
+  // ролик и не станет рисовать красную точку.
+  return reply(
+    candidate ? { status: "unknown", videoId: candidate } : { status: "unknown" },
+    { via: "feed", feed, api, page },
   );
 }
