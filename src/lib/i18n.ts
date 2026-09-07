@@ -64,6 +64,12 @@ export const translations = {
         "Я один человек. Я строю прозрачную казну в прямом эфире.",
       ],
       liveLabel: "Прямой эфир казны",
+      liveBadge: "В эфире",
+      offlineTitle: "Сейчас эфира нет",
+      offlineBody:
+        "Трансляция временно не идёт. Слиток, сертификат и документ покупки никуда не делись — их можно посмотреть в разделе «Казна» прямо сейчас.",
+      watchOnYoutube: "Смотреть на YouTube",
+      streamChecking: "Проверяю эфир…",
       videoPlaceholderLabel: "YouTube placeholder",
       videoPlaceholderTitle:
         "Здесь будет прямая трансляция золотого слитка и документов казны",
@@ -560,6 +566,12 @@ export const translations = {
         "I'm one person. I'm building a transparent treasury on a live stream.",
       ],
       liveLabel: "Live treasury stream",
+      liveBadge: "Live now",
+      offlineTitle: "The stream is off right now",
+      offlineBody:
+        "The broadcast is paused. The bar, the certificate and the purchase document have not gone anywhere — you can look at them in the Treasury section right now.",
+      watchOnYoutube: "Watch on YouTube",
+      streamChecking: "Checking the stream…",
       videoPlaceholderLabel: "YouTube placeholder",
       videoPlaceholderTitle:
         "A live stream of the gold bar and the treasury's documents will be placed here",

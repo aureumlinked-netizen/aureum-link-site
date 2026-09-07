@@ -33,3 +33,28 @@ function isLive(href: string): boolean {
 export const LIVE_SOCIALS: SocialKey[] = SOCIAL_ORDER.filter((key) =>
   isLive(SOCIAL_HREFS[key]),
 );
+
+/**
+ * Прямой эфир на YouTube.
+ *
+ * `watch` — постоянная ссылка: YouTube сам перенаправляет её на текущую
+ * трансляцию, поэтому при перезапуске эфира она не протухает.
+ *
+ * `fallbackVideoId` берётся, только если `/api/live` недоступен — локальная
+ * сборка без Cloudflare Functions или сбой функции. В обычной работе ID
+ * приходит с сервера, и правки в коде для смены эфира не нужны.
+ */
+export const LIVE_STREAM = {
+  channelId: "UCXl8kXGL17Ax7ziQLgP8rvQ",
+  watch: "https://www.youtube.com/@AureumLink/live",
+  fallbackVideoId:
+    process.env.NEXT_PUBLIC_YOUTUBE_VIDEO_ID?.trim() || "FVgBS0d6bM0",
+} as const;
+
+/**
+ * Единственная форма, которую принимает iframe. Ссылку вида
+ * `youtube.com/live/<id>` или `watch?v=<id>` YouTube во фрейме блокирует.
+ */
+export function embedUrl(videoId: string): string {
+  return `https://www.youtube.com/embed/${videoId}`;
+}

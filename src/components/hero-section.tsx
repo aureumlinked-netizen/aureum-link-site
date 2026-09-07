@@ -1,14 +1,63 @@
 "use client";
 
 import Link from "next/link";
+import { useEffect, useState } from "react";
 import { HeroNavbar } from "@/components/hero-navbar";
 import { TypewriterHero } from "@/components/typewriter-hero";
+import { LIVE_STREAM, embedUrl } from "@/lib/social-links";
 import { useTranslations } from "@/lib/language-context";
 
-const youtubeEmbedUrl = process.env.NEXT_PUBLIC_YOUTUBE_EMBED_URL;
+/**
+ * Состояние трансляции.
+ *
+ * "unknown" отделено от "offline" намеренно: если `/api/live` недоступен
+ * (локальная сборка без Cloudflare Functions, сбой YouTube), мы показываем
+ * запасной эфир, но НЕ рисуем красную точку — утверждать, что эфир идёт, мы
+ * в этот момент не можем.
+ */
+type StreamState =
+  | { status: "checking" }
+  | { status: "live"; videoId: string }
+  | { status: "offline" }
+  | { status: "unknown"; videoId: string };
 
 export function HeroSection() {
   const t = useTranslations();
+  const [stream, setStream] = useState<StreamState>({ status: "checking" });
+
+  useEffect(() => {
+    let cancelled = false;
+    const fallback: StreamState = {
+      status: "unknown",
+      videoId: LIVE_STREAM.fallbackVideoId,
+    };
+
+    // Путь абсолютный и без basePath: это Pages Function, а не маршрут Next.
+    fetch("/api/live", { cache: "no-store" })
+      .then((r) => (r.ok ? r.json() : Promise.reject(new Error(String(r.status)))))
+      .then((data: { status?: string; videoId?: string }) => {
+        if (cancelled) return;
+        if (data?.status === "live" && data.videoId) {
+          setStream({ status: "live", videoId: data.videoId });
+        } else if (data?.status === "offline") {
+          setStream({ status: "offline" });
+        } else {
+          setStream(fallback);
+        }
+      })
+      .catch(() => {
+        if (!cancelled) setStream(fallback);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const playingId =
+    stream.status === "live" || stream.status === "unknown"
+      ? stream.videoId
+      : null;
 
   return (
     <section className="relative min-h-screen overflow-hidden">
@@ -31,37 +80,60 @@ export function HeroSection() {
               >
                 <div className="mb-3 flex items-center justify-between gap-3 px-2 py-1 text-left text-xs uppercase tracking-[0.24em] text-white/58 sm:px-3">
                   <span>{t.hero.liveLabel}</span>
-                  <span className="inline-flex items-center gap-2 text-white/70">
-                    <span className="h-2.5 w-2.5 rounded-full bg-red-500 shadow-[0_0_18px_rgba(239,68,68,0.7)]" />
-                    Online window
-                  </span>
+
+                  {/* Красная точка появляется, только когда эфир подтверждён */}
+                  {stream.status === "live" ? (
+                    <span className="inline-flex items-center gap-2 text-white/70">
+                      <span className="h-2.5 w-2.5 rounded-full bg-red-500 shadow-[0_0_18px_rgba(239,68,68,0.7)]" />
+                      {t.hero.liveBadge}
+                    </span>
+                  ) : stream.status === "checking" ? (
+                    <span className="text-white/40">{t.hero.streamChecking}</span>
+                  ) : null}
                 </div>
 
                 <div className="relative aspect-video overflow-hidden rounded-[1.5rem] border border-white/10 bg-black/65">
-                  {youtubeEmbedUrl ? (
+                  {playingId ? (
                     <iframe
+                      key={playingId}
                       title="AUREUM LINK live reserve stream"
-                      src={youtubeEmbedUrl}
+                      src={embedUrl(playingId)}
                       className="h-full w-full"
                       allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                       referrerPolicy="strict-origin-when-cross-origin"
                       allowFullScreen
                     />
-                  ) : (
+                  ) : stream.status === "offline" ? (
                     <div className="flex h-full flex-col items-center justify-center gap-4 px-6 text-center">
-                      <span className="rounded-full border border-[rgba(243,217,161,0.3)] bg-[rgba(243,217,161,0.08)] px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.22em] text-[var(--gold-bright)]">
-                        {t.hero.videoPlaceholderLabel}
+                      <span className="rounded-full border border-white/14 bg-white/5 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.22em] text-white/60">
+                        {t.hero.offlineTitle}
                       </span>
-                      <div className="space-y-3">
-                        <h2 className="text-2xl font-semibold tracking-[-0.03em] text-white sm:text-3xl">
-                          {t.hero.videoPlaceholderTitle}
-                        </h2>
-                        <p className="mx-auto max-w-3xl text-sm leading-7 text-white/64 sm:text-base">
-                          {t.hero.videoPlaceholderBody}
-                        </p>
-                      </div>
+                      <p className="mx-auto max-w-2xl text-sm leading-7 text-white/64 sm:text-base">
+                        {t.hero.offlineBody}
+                      </p>
+                      <Link
+                        href="/treasury"
+                        className="rounded-full border border-[var(--gold-soft)]/45 bg-[var(--gold-soft)]/[0.1] px-5 py-2.5 text-sm font-semibold text-[var(--gold-bright)] transition hover:bg-[var(--gold-soft)]/[0.18]"
+                      >
+                        {t.hero.ctaTreasury}
+                      </Link>
+                    </div>
+                  ) : (
+                    <div className="flex h-full items-center justify-center text-xs text-white/30">
+                      {t.hero.streamChecking}
                     </div>
                   )}
+                </div>
+
+                <div className="px-2 pt-3 text-left sm:px-3">
+                  <a
+                    href={LIVE_STREAM.watch}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-xs text-white/45 transition hover:text-[var(--gold-bright)]"
+                  >
+                    {t.hero.watchOnYoutube} ↗
+                  </a>
                 </div>
               </div>
 
@@ -85,4 +157,3 @@ export function HeroSection() {
     </section>
   );
 }
-
