@@ -95,8 +95,10 @@ async function checkWithApi(apiKey, videoId) {
     // actualEndTime появляется у завершённой трансляции: запись — не эфир
     const ended = Boolean(item.liveStreamingDetails?.actualEndTime);
     return { ok: true, live: state === "live" && !ended, state };
-  } catch (err) {
-    return { ok: false, why: String(err) };
+  } catch {
+    // Текст ошибки сюда не попадает намеренно: в URL запроса лежит ключ, а
+    // debug-ответ отдаётся публично.
+    return { ok: false, why: "запрос к API не удался" };
   }
 }
 
