@@ -94,6 +94,10 @@ export function HeroSection() {
                     </span>
                   ) : stream.status === "checking" ? (
                     <span className="text-white/40">{t.hero.streamChecking}</span>
+                  ) : stream.status === "unknown" ? (
+                    // Эфир не подтверждён: под заголовком может идти запись
+                    // последней трансляции, и подпись говорит об этом прямо.
+                    <span className="text-white/40">{t.hero.streamLatest}</span>
                   ) : null}
                 </div>
 
