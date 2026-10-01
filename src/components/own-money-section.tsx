@@ -6,9 +6,8 @@ import { useTranslations } from "@/lib/language-context";
 /**
  * "My own money in the project".
  *
- * The strongest trust signal the project has: the bar was paid for before any
- * money was raised. The amount is always shown in both currencies — 172k reads
- * as dollars out loud, and it is Singapore dollars.
+ * The first bar is to be paid for with the founder's own money before any
+ * money is raised. Nothing is bought yet, so no amount is shown.
  */
 export function OwnMoneySection() {
   const t = useTranslations();

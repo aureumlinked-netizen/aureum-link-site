@@ -11,7 +11,7 @@ export type SocialKey = "twitter" | "telegram" | "youtube" | "reddit" | "email";
 export const SOCIAL_HREFS: Record<SocialKey, string> = {
   twitter: "https://x.com/aureumlink",
   telegram: "https://t.me/aureum_link",
-  youtube: "https://www.youtube.com/@AureumLink",
+  youtube: "", // скрыт: ролики канала описывают покупку, которой ещё нет
   reddit: "", // не заведён
   email: "", // не заведён: личную почту сюда не ставим
 };

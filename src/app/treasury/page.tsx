@@ -50,7 +50,7 @@ export default function TreasuryPage() {
             {tp.description}
           </p>
           <div className="mt-6 inline-flex items-center gap-2 rounded-full border border-white/12 bg-white/5 px-4 py-2 text-xs uppercase tracking-[0.2em] text-white/70">
-            <span className="h-2.5 w-2.5 rounded-full bg-red-500 shadow-[0_0_18px_rgba(239,68,68,0.7)]" />
+            <span className="h-2.5 w-2.5 rounded-full bg-amber-400" />
             {tp.liveLabel}
           </div>
         </div>
@@ -180,7 +180,8 @@ export default function TreasuryPage() {
                       <p className="mt-2 max-w-3xl text-sm leading-6 text-white/62">
                         {tp.proofsIntro}
                       </p>
-
+                      {asset.documents.length > 0 ? (
+                        <>
                       {/* two 16:9 certificates stacked on the left, the tall
                           invoice running alongside them on the right */}
                       <div className="mt-6 grid gap-5 lg:grid-cols-[3.4fr_1fr]">
@@ -211,14 +212,8 @@ export default function TreasuryPage() {
                         ) : null}
                       </div>
 
-                      <div className="mt-6 space-y-2">
-                        <p className="text-[11px] leading-5 text-white/45">
-                          🔒 {tp.redactedNote}
-                        </p>
-                        <p className="text-[11px] leading-5 text-white/45">
-                          🛡️ {tp.protectedNote}
-                        </p>
-                      </div>
+                        </>
+                      ) : null}
                     </div>
                   </article>
                 </Reveal>

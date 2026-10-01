@@ -22,13 +22,13 @@ const siteUrl =
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
-  title: "AUREUM LINK | A public, verifiable treasury of real assets",
+  title: "AUREUM LINK | An idea: a verifiable treasury that starts with real gold",
   description:
-    "AUREUM LINK is a project with a public, verifiable treasury of real assets, starting with a gold bar on a live stream. Not an investment product — no promises, only what you can verify.",
+    "I'm planning to buy 1 kg of gold with my own money before any token exists and build an open treasury of real assets around it. It's an idea — tell me if it's needed. Nothing is for sale.",
   openGraph: {
-    title: "AUREUM LINK | A public, verifiable treasury of real assets",
+    title: "AUREUM LINK | An idea: a verifiable treasury that starts with real gold",
     description:
-      "A project with a public, verifiable treasury of real assets — radical transparency, a live stream, and documents. The token is not an investment product and promises no profit.",
+      "An idea under discussion: buy real gold first, publish every document, decide the next purchase together. No token exists, nothing is for sale.",
     type: "website",
     images: ["/logo-512.png"],
   },

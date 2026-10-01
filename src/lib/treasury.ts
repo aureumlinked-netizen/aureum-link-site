@@ -31,67 +31,26 @@ export type TreasuryAsset = {
   documents: AssetDocument[];
 };
 
+// Nothing is bought yet. The only entry is the planned first purchase, shown
+// with every field empty so the page says plainly what does not exist.
 export const TREASURY_ASSETS: TreasuryAsset[] = [
   {
-    id: "gold-bar-c518680",
+    id: "planned-gold-1kg",
     name: {
-      ru: "Золотой слиток PAMP Suisse, 1 кг",
-      en: "PAMP Suisse gold bar, 1 kg",
+      ru: "Золото, 1 кг (план)",
+      en: "Gold, 1 kg (planned)",
     },
     kind: {
-      ru: "Драгоценный металл · золото 999,9",
-      en: "Precious metal · gold 999.9",
+      ru: "Драгоценный металл · ещё не куплен",
+      en: "Precious metal · not bought yet",
     },
-    status: "owned",
-    serialNumber: "C518680",
-    purchaseDate: { ru: "11 июня 2026", en: "11 June 2026" },
-    purchasePrice: {
-      ru: "172 020,79 SGD (~$133 000)",
-      en: "172,020.79 SGD (~$133,000)",
-    },
-    // Left null on purpose: the market price of gold moves, and publishing a
-    // stale or invented number would undercut the point of the treasury.
+    status: "pending",
+    serialNumber: null,
+    purchaseDate: null,
+    purchasePrice: null,
     currentValue: null,
-    vendor: "Silver Bullion Pte Ltd, Singapore",
-    photoDoc: {
-      doc: { id: "gold-bar", cols: 3, rows: 6, width: 900, height: 1771 },
-      caption: {
-        ru: "Слиток в заводской запайке",
-        en: "The bar in its factory seal",
-      },
-      meta: "C518680 · 1 KILO · 999.9",
-    },
-    documents: [
-      {
-        doc: { id: "certificate", cols: 4, rows: 3, width: 1440, height: 810 },
-        caption: {
-          ru: "Сертификат PAMP Suisse",
-          en: "PAMP Suisse assay certificate",
-        },
-        meta: "C518680 · 1000 g · 999,9",
-      },
-      {
-        doc: {
-          id: "certificate-uv",
-          cols: 4,
-          rows: 3,
-          width: 1440,
-          height: 810,
-        },
-        caption: {
-          ru: "Тот же сертификат в УФ-свете",
-          en: "The same certificate under UV light",
-        },
-        meta: "UV · C518680",
-      },
-      {
-        doc: { id: "invoice", cols: 2, rows: 8, width: 1000, height: 3780 },
-        caption: {
-          ru: "Документ покупки (инвойс)",
-          en: "Purchase document (invoice)",
-        },
-        meta: "INV-2026-110684",
-      },
-    ],
+    vendor: null,
+    photoDoc: null,
+    documents: [],
   },
 ];
